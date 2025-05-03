@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Patient Data System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(30deg, #081e56, #79c5f1);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .page-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      max-width: 900px;
+      width: 100%;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      overflow-y: auto;
+    }
+
+    h1, h3 {
+      text-align: center;
+      color: #2a21a7;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .button {
+      background-color: #2a21a7;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      font-size: 16px;
+      width: 100%;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background-color: #1d178f;
+    }
+
+    .upload-preview {
+      margin: 15px 0;
+      border: 2px dashed #2a21a7;
+      padding: 10px;
+      text-align: center;
+      min-height: 60px;
+      background: #f7faff;
+      border-radius: 6px;
+    }
+
+    .upload-preview img {
+      max-width: 200px;
+      max-height: 200px;
+      margin: 10px auto;
+      display: block;
+    }
+
+    .upload-preview span {
+      color: #2a21a7;
+      font-size: 14px;
+    }
+
+    label[for] {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+    }
+
+    footer.site-footer {
+      background-color: #1d178f;
+      color: #ffffff;
+      text-align: center;
+      padding: 15px 10px;
+      font-size: 14px;
+      border-top: 2px solid #fdd835;
+    }
+
+    footer.site-footer strong {
+      color: #fdd835;
+    }
+    #footer-name {
+      text-decoration: none;
+      color: gold;
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <div class="card" id="formContainer">
+      <h1>Patient Data System</h1>
+      <div class="grid">
+        <input id="patientName" placeholder="Full Name" />
+        <input id="dob" type="date" placeholder="Date of Birth" />
+        <input id="age" type="number" placeholder="Age" />
+        <select id="gender">
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+        <input id="Parent/Gaurdian/Spouse" placeholder="Parent/Gaurdian/Spouse" />
+        <input id="contact" placeholder="Contact Number" />
+        <input id="email" placeholder="Email Address" />
+        <input id="address" placeholder="Address" />
+        <input id="emergencyContact" placeholder="Emergency Contact" />
+        <input id="maritalStatus" placeholder="Marital Status" />
+        <input id="occupation" placeholder="Occupation" />
+      </div>
+
+      <h3>Medical History</h3>
+      <div class="grid">
+        <textarea id="pastMedicalHistory" placeholder="Past Medical History"></textarea>
+        <textarea id="familyHistory" placeholder="Family Medical History"></textarea>
+        <textarea id="allergies" placeholder="Allergies"></textarea>
+        <textarea id="currentMedications" placeholder="Current Medications"></textarea>
+        <textarea id="chronicConditions" placeholder="Chronic Conditions"></textarea>
+        <textarea id="vaccinationHistory" placeholder="Vaccination History"></textarea>
+      </div>
+
+      <h3>Current Health</h3>
+      <div class="grid">
+        <textarea id="chiefComplaint" placeholder="Chief Complaint"></textarea>
+        <textarea id="symptoms" placeholder="Symptoms"></textarea>
+        <input id="painLevel" type="number" placeholder="Pain Level (1-10)" />
+        <input id="vitalSigns" placeholder="Vital Signs (BP, HR, Temp)" />
+        <input id="height" type="number" placeholder="Height (cm)" />
+        <input id="weight" type="number" placeholder="Weight (kg)" />
+        <input id="dietaryHabits" placeholder="Dietary Habits" />
+        <input id="lifestyleHabits" placeholder="Lifestyle Habits" />
+      </div>
+
+      <h3>Other Info</h3>
+      <div class="grid">
+        <input id="travelHistory" placeholder="Recent Travel History" />
+        <textarea id="psychologicalHistory" placeholder="Psychological History"></textarea>
+        <textarea id="socialHistory" placeholder="Social History"></textarea>
+        <input id="insurance" placeholder="Insurance Info" />
+      </div>
+
+      <h3>Uploads</h3>
+      <div class="grid">
+        <div>
+          <label for="prescriptionUpload">Upload Prescription:</label>
+          <input type="file" id="prescriptionUpload" accept="image/*" />
+          <div class="upload-preview" id="prescriptionPreview">
+            <span>Prescription Preview</span>
+          </div>
+        </div>
+        <div>
+          <label for="patientPhotoUpload">Upload Patient Photo:</label>
+          <input type="file" id="patientPhotoUpload" accept="image/*" />
+          <div class="upload-preview" id="patientPhotoPreview">
+            <span>Patient Photo Preview</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="button" onclick="generatePDF()">Generate & Download PDF</button>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>Developed by <a id="footer-name" href="https://www.linkedin.com/in/sreeramsp/">Sreeram Palani </a>&copy; 2025</p>
+  </footer>
+
+<script>
+    // Preview for prescription (image only)
+    document.getElementById('prescriptionUpload').addEventListener('change', function(e) {
+      handleFileUpload(e.target.files[0], '#prescriptionPreview');
+    });
+
+    // Preview for patient photo (image only)
+    document.getElementById('patientPhotoUpload').addEventListener('change', function(e) {
+      handleFileUpload(e.target.files[0], '#patientPhotoPreview');
+    });
+
+    function handleFileUpload(file, previewId) {
+      if (!file) return;
+      const preview = document.querySelector(previewId);
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        if (file.type.startsWith('image/')) {
+          preview.innerHTML = `<img src="${e.target.result}" alt="Upload preview" />`;
+        } else {
+          preview.innerHTML = `<span>Unsupported file type</span>`;
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Helper to get field value and skip empty
+    function getValue(id) {
+      const el = document.getElementById(id);
+      return el && el.value && el.value.trim() !== "" ? el.value.trim() : null;
+    }
+
+    // Helper to get select value and skip empty
+    function getSelectValue(id) {
+      const el = document.getElementById(id);
+      return el && el.value && el.value !== "" ? el.value : null;
+    }
+
+    // Helper to get textarea value and skip empty
+    function getTextareaValue(id) {
+      const el = document.getElementById(id);
+      return el && el.value && el.value.trim() !== "" ? el.value.trim() : null;
+    }
+
+    // Helper to get uploaded image as DataURL
+    function getImageDataURL(inputId) {
+      return new Promise(resolve => {
+        const input = document.getElementById(inputId);
+        if (input && input.files && input.files[0] && input.files[0].type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = e => resolve(e.target.result);
+          reader.readAsDataURL(input.files[0]);
+        } else {
+          resolve(null);
+        }
+      });
+    }
+
+    async function generatePDF() {
+      const button = document.querySelector("button");
+      button.style.display = "none";
+
+      // Q&A pairs with section headers
+      const sections = [
+        {
+          title: "Patient Information",
+          color: "#164cd5",
+          questions: [
+            {q: "Full Name", a: getValue('patientName')},
+            {q: "Date of Birth", a: getValue('dob')},
+            {q: "Age", a: getValue('age')},
+            {q: "Gender", a: getSelectValue('gender')},
+            {q: "Parent/Gaurdian/Spouse", a: getValue('Parent/Gaurdian/Spouse')},
+            {q: "Contact Number", a: getValue('contact'), extraSpace: true},
+            {q: "Email Address", a: getValue('email')},
+            {q: "Address", a: getValue('address')},
+            {q: "Emergency Contact", a: getValue('emergencyContact')},
+            {q: "Marital Status", a: getValue('maritalStatus')},
+            {q: "Occupation", a: getValue('occupation')}
+          ]
+        },
+        {
+          title: "Medical History",
+          color: "#1cb5e0",
+          questions: [
+            {q: "Past Medical History", a: getTextareaValue('pastMedicalHistory')},
+            {q: "Family Medical History", a: getTextareaValue('familyHistory')},
+            {q: "Allergies", a: getTextareaValue('allergies')},
+            {q: "Current Medications", a: getTextareaValue('currentMedications')},
+            {q: "Chronic Conditions", a: getTextareaValue('chronicConditions')},
+            {q: "Vaccination History", a: getTextareaValue('vaccinationHistory')}
+          ]
+        },
+        {
+          title: "Current Health",
+          color: "#fbb034",
+          questions: [
+            {q: "Chief Complaint", a: getTextareaValue('chiefComplaint')},
+            {q: "Symptoms", a: getTextareaValue('symptoms')},
+            {q: "Pain Level (1-10)", a: getValue('painLevel')},
+            {q: "Vital Signs (BP, HR, Temp)", a: getValue('vitalSigns')},
+            {q: "Height (cm)", a: getValue('height')},
+            {q: "Weight (kg)", a: getValue('weight')},
+            {q: "Dietary Habits", a: getValue('dietaryHabits')},
+            {q: "Lifestyle Habits", a: getValue('lifestyleHabits')}
+          ]
+        },
+        {
+          title: "Other Info",
+          color: "#43cea2",
+          questions: [
+            {q: "Recent Travel History", a: getValue('travelHistory')},
+            {q: "Psychological History", a: getTextareaValue('psychologicalHistory')},
+            {q: "Social History", a: getTextareaValue('socialHistory')},
+            {q: "Insurance Info", a: getValue('insurance')}
+          ]
+        }
+      ];
+
+      // Get images as DataURL
+      const prescriptionImage = await getImageDataURL('prescriptionUpload');
+      const patientPhoto = await getImageDataURL('patientPhotoUpload');
+
+      // Prepare PDF
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({
+        orientation: "p",
+        unit: "mm",
+        format: "a4",
+        lineHeight: 1.5
+      });
+
+      const marginLeft = 15, marginTop = 20, pageWidth = 180;
+      let y = marginTop;
+
+      // Title
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(20);
+      pdf.setTextColor("#164cd5");
+      pdf.text("Patient Data System", marginLeft, y);
+      y += 12;
+      pdf.setFontSize(12);
+
+      // Loop through sections and print Q&A with free flowing answers
+      for (const section of sections) {
+        // Section header
+        if (y > 270) { pdf.addPage(); y = marginTop; }
+        pdf.setFillColor(section.color);
+        pdf.setTextColor(255,255,255);
+        pdf.setFontSize(14);
+        pdf.setFont("helvetica", "bold");
+        pdf.rect(marginLeft-3, y-6, pageWidth, 10, "F");
+        pdf.text(section.title, marginLeft, y);
+        y += 10;
+        pdf.setFontSize(12);
+
+        // Q&A
+        for (const pair of section.questions) {
+          if (pair.a) {
+            if (y > 270) { pdf.addPage(); y = marginTop; }
+
+            // Question in color, bold
+            pdf.setTextColor(section.color);
+            pdf.setFont("helvetica", "bold");
+            pdf.text(pair.q + ":", marginLeft, y);
+            y += 7;
+
+            // Answer in black, normal font, full width with wrapping
+            pdf.setTextColor(40,40,40);
+            pdf.setFont("helvetica", "normal");
+            const splitText = pdf.splitTextToSize(pair.a, pageWidth);
+            pdf.text(splitText, marginLeft, y);
+            y += 7 * splitText.length;
+
+            // Extra space after Contact Number to avoid overlap
+            if (pair.q === "Contact Number" && pair.a) {
+              y += 5;
+            }
+
+            // Add vertical space between Q&A
+            y += 8;
+          }
+        }
+        y += 4;
+      }
+
+      // Add images, if present
+      async function addImageToPDF(imageData, label, borderColor) {
+        if (!imageData) return;
+        if (y > 220) { pdf.addPage(); y = marginTop; }
+        // Label
+        pdf.setTextColor(borderColor);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(label, marginLeft, y);
+        y += 5;
+        // Draw image, scale to fit width
+        const imgProps = pdf.getImageProperties(imageData);
+        let imgWidth = 60, imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+        if (imgHeight > 60) {
+          imgHeight = 60;
+          imgWidth = (imgProps.width * imgHeight) / imgProps.height;
+        }
+        // Border rectangle for color
+        pdf.setDrawColor(borderColor);
+        pdf.rect(marginLeft-2, y-2, imgWidth+4, imgHeight+4);
+        pdf.addImage(imageData, "JPEG", marginLeft, y, imgWidth, imgHeight);
+        y += imgHeight + 10;
+      }
+
+      await addImageToPDF(prescriptionImage, "Prescription Image", "#1cb5e0");
+      await addImageToPDF(patientPhoto, "Patient Photo", "#fbb034");
+
+      pdf.save("Patient_Report.pdf");
+      button.style.display = "block";
+    }
+</script>
+</body>
+</html>
